@@ -1,0 +1,25 @@
+to setup typescript.
+1.- Install globaly
+npm i -g typescript
+
+2.- crear app.ts
+
+3.- compilar. (-w es la bandera watch)
+tsc app.ts -w
+
+4.- crear ts config
+tsc --init
+
+5.- cambiar configuraciones.
+outDir, rootDir, moduleResolution
+
+6.- tsc -w para compilar
+
+7.- npm i -D typescript ts-node @types/node @types/express
+
+8.- Añadir scripts usando dist
+"start": "node dist/app.js",
+"dev": "nodemon src/app.ts",
+"build": "tsc -p ."
+
+Buenas noticias! puedes usar import
