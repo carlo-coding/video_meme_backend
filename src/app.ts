@@ -31,10 +31,10 @@ gameNamespace.on("connection", (socket)=> {
         socket.to(socket_id).emit("respond-propagation", {socket_id: socket.id, username });
     })
 
-    socket.on("signal", ({signal, user_id}: any) => {
-        socket.to(user_id).emit("signal", {
+    socket.on("signal", ({signal, socket_id}: any) => {
+        socket.to(socket_id).emit("signal", {
             signal,
-            user_id: socket.id,
+            socket_id: socket.id,
         })
     })
     
