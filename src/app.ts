@@ -1,5 +1,8 @@
 import express from "express";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
+import { ExtendedError } from "socket.io/dist/namespace";
+import { Game, getRandomWord } from "./utils";
+
 const PORT = 4057;
 
 const app = express();
@@ -15,9 +18,12 @@ const io = new Server(server, {
     serveClient: false
 });
 
-const gameNamespace = io.of(/^\/game-\d+$/);
+const videoNamespace = io.of(/^\/gvideo-\w+$/);
 
-gameNamespace.on("connection", (socket)=> {
+const timeToGuess = 60;
+
+videoNamespace.on("connection", (socket)=> {
+    const currentNamespace = socket.nsp;
 
     socket.on("start-propagation", (userName)=> {
         socket.broadcast.emit("start-propagation", {
@@ -41,12 +47,36 @@ gameNamespace.on("connection", (socket)=> {
     // Manejar desconexión
     socket.on("disconnect", ()=> {
         socket.broadcast.emit("peer-disconnected", socket.id);
+        //sockets[socket.nsp.name] = sockets[socket.nsp.name].filter((id: string)=> id !== socket.id);
     });
 
 
     // Handle messages
     socket.on("message", (message)=> {
-        gameNamespace.emit("message", { socket_id: socket.id, message})
+        videoNamespace.emit("message", { socket_id: socket.id, message})
+    });
+
+    socket.on("game:start", ()=> {
+        socket.broadcast.emit("game:send-id", {socket_id: socket.id});
+    });
+
+    socket.on("game:player-start", ({ socket_id }) => {
+        // Whether a player guesses or not, we send the timeout
+        // Emit timeout and socket_id
+        setTimeout(()=> {
+            currentNamespace.emit("game:time-out", { socket_id })
+        }, timeToGuess * 1000);
+
+        let newWord = getRandomWord();
+        currentNamespace.emit("game:player-start", { socket_id, word: newWord, time: timeToGuess })
+    });
+
+    socket.on("game:user-guessed", data=> {
+        currentNamespace.emit("game:user-guessed", data);
+    });
+
+    socket.on("game:message", message=> {
+        socket.broadcast.emit("game:message", { socket_id: socket.id, message})
     })
     
 })
