@@ -1,4 +1,7 @@
-export const palabras = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.palabras = void 0;
+exports.palabras = [
     "PROFESOR",
     "VELO",
     "CASCO",
@@ -99,4 +102,4 @@ export const palabras = [
     "ASPIRADORA",
     "CAÑOS",
     "ESPIGA",
-]
+];
