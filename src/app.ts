@@ -80,6 +80,10 @@ videoNamespace.on("connection", (socket)=> {
 
     socket.on("game:message", message=> {
         socket.broadcast.emit("game:message", { socket_id: socket.id, message})
+    });
+
+    socket.on("game:gameover", () => {
+        currentNamespace.emit("game:gameover")
     })
     
 })
